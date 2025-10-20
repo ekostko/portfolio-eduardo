@@ -106,7 +106,7 @@ document.querySelector('#app').innerHTML = `
         </div>
       </div>
       <div>
-        <img src="${path('hero.jpg')}" alt="Portada del portafolio" class="w-full rounded-2xl border border-neutral-200" />
+        <img src="${path('hero.jpg')}" ... class="w-full rounded-2xl shadow-sm" />
       </div>
     </section>
 
@@ -129,9 +129,12 @@ document.querySelector('#app').innerHTML = `
 
       <!-- Grid -->
     <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="galeria"></div>
-<button id="loadMore" class="btn btn-outline mt-6 w-full md:w-auto">
-  Cargar más
-</button>
+<div class="flex justify-center mt-10">
+  <button id="loadMore"
+          class="btn btn-outline px-10 py-3 rounded-2xl text-sm hover:bg-neutral-120 transition">
+    Cargar más
+  </button>
+</div>
     </section>
 
        <section id="diseno" class="max-w-6xl mx-auto px-4 py-16 border-t border-neutral-100">
@@ -480,7 +483,7 @@ const IMAGES = [
 ];
 
 // ====== RENDER CON PAGINACIÓN ======
-const galeriaEl = document.getElementById('galeria');
+let galeriaEl = document.getElementById('galeria');
 const filtrosEl = document.getElementById('filtros');
 const loadMoreBtn = document.getElementById('loadMore');
 
@@ -503,12 +506,13 @@ function card(img) {
            class="h-full w-full object-cover transition group-hover:scale-105" />
     `;
 
-  const dataFull = img.fullWebp || img.full;
+  // pequeña clave para evitar que el navegador reutilice el último bitmap renderizado
+  const dataFull = (img.fullWebp || img.full) + `#k=${Date.now()}`;
 
   return `
     <button
-      class="group relative aspect-[4/3] overflow-hidden rounded-xl border border-neutral-200"
-      data-full="${dataFull}" aria-label="ver ${img.alt}">
+  class="group relative aspect-[4/3] overflow-hidden rounded-xl shadow-sm hover:shadow-md transition"
+  data-full="...">
       ${picture}
       <span class="pointer-events-none absolute inset-0 ring-0 ring-inset group-hover:ring-2 group-hover:ring-black/10 rounded-xl"></span>
     </button>
@@ -520,19 +524,53 @@ function filtered() {
 }
 
 function renderPage(reset = false) {
-  const items = filtered();
-  const count = reset ? (PAGE_SIZE) : (PAGE_SIZE + (page - 1) * PAGE_STEP);
-  const slice = items.slice(0, count);
+  // Si vengo de otra sección o filtro, limpio contenedor y eventos
+  if (reset) {
+    galeriaEl = resetGaleriaContainer(); // recuerda que galeriaEl debe ser "let"
+  }
 
-  if (reset) galeriaEl.innerHTML = '';
-  galeriaEl.innerHTML = slice.map(card).join('');
+  const items = filtered();                    // obtiene todas las imágenes filtradas
+  const limit = reset ? PAGE_SIZE : PAGE_SIZE + (page - 1) * PAGE_STEP;
+  const visibleItems = items.slice(0, limit);  // ← ESTA es la línea importante 👈
 
-  // Mostrar/ocultar botón
-  if (slice.length >= items.length) {
+  // Renderiza las tarjetas
+  galeriaEl.innerHTML = visibleItems.map(card).join('');
+
+  // Controla la visibilidad del botón “Cargar más”
+  if (visibleItems.length >= items.length) {
     loadMoreBtn.classList.add('hidden');
   } else {
     loadMoreBtn.classList.remove('hidden');
   }
+
+  // Reasigna el evento del lightbox al nuevo contenedor
+  galeriaEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-full]');
+    if (!btn) return;
+    const src = btn.getAttribute('data-full');
+    const lbImg = document.getElementById('lbImg');
+    const overlay = document.getElementById('lightbox');
+    if (lbImg && overlay) {
+      lbImg.src = src;
+      overlay.classList.remove('hidden');
+    }
+  });
+}
+
+  // --- Reset de contenedor y eventos (evita listeners “fantasma”) ---
+function resetGaleriaContainer() {
+  const old = document.getElementById('galeria');
+  const fresh = old.cloneNode(false);        // clona SIN hijos ni eventos
+  old.replaceWith(fresh);
+  return fresh; // devuelve el nuevo nodo
+}
+
+// Deja siempre el overlay limpio
+function closeLightbox() {
+  const overlay = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  overlay?.classList.add('hidden');
+  if (lbImg) lbImg.src = '';
 }
 
 // Estado visual del botón activo
@@ -560,6 +598,33 @@ loadMoreBtn.addEventListener('click', () => {
   page += 1;
   renderPage(false);
 });
+
+// --- Navegación por anclas: al ir a #fotografia o #diseno, fuerza render limpio
+function onRouteChange() {
+  const hash = location.hash || '';
+  // Siempre cierro cualquier imagen ampliada
+  closeLightbox();
+
+  if (hash === '#fotografia') {
+    // reset a “Todos” y repinto
+    currentFilter = 'all';
+    page = 1;
+
+    // marcar botón activo “Todos” si existe
+    const btnTodos = filtrosEl?.querySelector('button[data-filter="all"]');
+    if (btnTodos) setActive(btnTodos);
+
+    renderPage(true);  // <- reset true para clonar contenedor y evitar eventos viejos
+    // opcional: scroll suave al inicio de la galería
+    galeriaEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Si más adelante montas la galería de diseño en el MISMO #galeria,
+  // aquí harías un render de diseño con reset similar.
+}
+window.addEventListener('hashchange', onRouteChange);
+// Si entras ya con hash (ej: link directo a #fotografia), dispara una vez
+onRouteChange();
 
 // ====== Render Diseño ======
 const gridDis = document.getElementById('gridDis');
@@ -662,13 +727,6 @@ if (!overlay) {
 const lbImg   = document.getElementById('lbImg');
 const lbClose = document.getElementById('lbClose');
 
-galeriaEl.addEventListener('click', (e) => {
-  const btn = e.target.closest('button[data-full]');
-  if (!btn) return;
-  const src = btn.getAttribute('data-full');
-  lbImg.src = src;
-  overlay.classList.remove('hidden');
-});
 overlay.addEventListener('click', (e) => {
   if (e.target.id === 'lightbox' || e.target.id === 'lbClose') {
     overlay.classList.add('hidden');
