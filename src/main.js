@@ -1,4 +1,6 @@
 import './style.css'
+const BASE = import.meta.env.BASE_URL;
+const path = (p) => `${BASE}${String(p).replace(/^\/+/, '')}`;
 
 // ---------- HEADER + FOOTER ----------
 const layoutTop = `
@@ -104,7 +106,7 @@ document.querySelector('#app').innerHTML = `
         </div>
       </div>
       <div>
-        <img src="/hero.jpg" alt="Portada del portafolio" class="w-full rounded-2xl border border-neutral-200" />
+        <img src="${path('hero.jpg')}" alt="Portada del portafolio" class="w-full rounded-2xl border border-neutral-200" />
       </div>
     </section>
 
@@ -159,8 +161,8 @@ document.querySelector('#app').innerHTML = `
       <div class="grid md:grid-cols-5 gap-8 items-start">
         <!-- Foto -->
         <div class="md:col-span-2">
-          <img src="/me.jpg" alt="Eduardo Kostko — Fotógrafo y Diseñador Visual"
-               class="w-full rounded-2xl border border-neutral-200 object-cover aspect-[4/5]" />
+          <img src="${path('me.jpg')}" alt="Eduardo Kostko — Fotógrafo y Diseñador Visual"
+          class="w-full rounded-2xl border border-[--border] object-cover aspect-[4/5]" />
         </div>
 
         <!-- Texto -->
@@ -320,11 +322,11 @@ const USE_OPT = true; // pon en true cuando tengas ret-XX-1200/2400
 const RETRATO_COUNT = 26;
 const retratoItems = Array.from({ length: RETRATO_COUNT }, (_, i) => {
   const n = String(i + 1).padStart(2, '0');
-  const gridJpg  = `/fotos/retrato/ret-${n}-1200.jpg`;
-  const gridWebp = `/fotos/retrato/ret-${n}-1200.webp`;
-  const fullJpg  = `/fotos/retrato/ret-${n}-2400.jpg`;
-  const fullWebp = `/fotos/retrato/ret-${n}-2400.webp`;
-  const baseJpg  = `/fotos/retrato/ret-${n}.jpg`;
+  const gridJpg  = path(`fotos/retrato/ret-${n}-1200.jpg`);
+  const gridWebp = path(`fotos/retrato/ret-${n}-1200.webp`);
+  const fullJpg  = path(`fotos/retrato/ret-${n}-2400.jpg`);
+  const fullWebp = path(`fotos/retrato/ret-${n}-2400.webp`);
+  const baseJpg  = path(`fotos/retrato/ret-${n}.jpg`);
   return {
     src: USE_OPT ? gridJpg : baseJpg,
     srcWebp: USE_OPT ? gridWebp : null,
@@ -335,18 +337,16 @@ const retratoItems = Array.from({ length: RETRATO_COUNT }, (_, i) => {
   };
 });
 
- // ---- Eventos (N fotos) ----
-// Cambia este número al total que generaste (por ejemplo 18, 24, etc.)
-const EVENTOS_COUNT = 14;
+// ---- Eventos ----
+const EVENTOS_COUNT = 14; // ajusta a tu número real
 
 const eventosItems = Array.from({ length: EVENTOS_COUNT }, (_, i) => {
   const n = String(i + 1).padStart(2, '0');
-  const gridJpg  = `/fotos/eventos/eve-${n}-1200.jpg`;
-  const gridWebp = `/fotos/eventos/eve-${n}-1200.webp`;
-  const fullJpg  = `/fotos/eventos/eve-${n}-2400.jpg`;
-  const fullWebp = `/fotos/eventos/eve-${n}-2400.webp`;
-  const baseJpg  = `/fotos/eventos/eve-${n}.jpg`;
-
+  const gridJpg  = path(`fotos/eventos/eve-${n}-1200.jpg`);
+  const gridWebp = path(`fotos/eventos/eve-${n}-1200.webp`);
+  const fullJpg  = path(`fotos/eventos/eve-${n}-2400.jpg`);
+  const fullWebp = path(`fotos/eventos/eve-${n}-2400.webp`);
+  const baseJpg  = path(`fotos/eventos/eve-${n}.jpg`);
   return {
     src:      USE_OPT ? gridJpg  : baseJpg,
     srcWebp:  USE_OPT ? gridWebp : null,
@@ -357,17 +357,16 @@ const eventosItems = Array.from({ length: EVENTOS_COUNT }, (_, i) => {
   };
 });
 
-// ---- Animales (4 fotos) ----
+// ---- Animales ----
 const ANIMALES_COUNT = 4;
 
 const animalesItems = Array.from({ length: ANIMALES_COUNT }, (_, i) => {
   const n = String(i + 1).padStart(2, '0');
-  const gridJpg  = `/fotos/animales/ani-${n}-1200.jpg`;
-  const gridWebp = `/fotos/animales/ani-${n}-1200.webp`;
-  const fullJpg  = `/fotos/animales/ani-${n}-2400.jpg`;
-  const fullWebp = `/fotos/animales/ani-${n}-2400.webp`;
-  const baseJpg  = `/fotos/animales/ani-${n}.jpg`;
-
+  const gridJpg  = path(`fotos/animales/ani-${n}-1200.jpg`);
+  const gridWebp = path(`fotos/animales/ani-${n}-1200.webp`);
+  const fullJpg  = path(`fotos/animales/ani-${n}-2400.jpg`);
+  const fullWebp = path(`fotos/animales/ani-${n}-2400.webp`);
+  const baseJpg  = path(`fotos/animales/ani-${n}.jpg`);
   return {
     src:      USE_OPT ? gridJpg  : baseJpg,
     srcWebp:  USE_OPT ? gridWebp : null,
@@ -378,17 +377,16 @@ const animalesItems = Array.from({ length: ANIMALES_COUNT }, (_, i) => {
   };
 });
 
-// ---- Producto (N fotos) ----
-const PRODUCTO_COUNT = 3; // <-- cámbialo a tu cantidad real
+// ---- Producto ----
+const PRODUCTO_COUNT = 3; // ajusta a tu número real
 
 const productoItems = Array.from({ length: PRODUCTO_COUNT }, (_, i) => {
   const n = String(i + 1).padStart(2, '0');
-  const gridJpg  = `/fotos/producto/prod-${n}-1200.jpg`;
-  const gridWebp = `/fotos/producto/prod-${n}-1200.webp`;
-  const fullJpg  = `/fotos/producto/prod-${n}-2400.jpg`;
-  const fullWebp = `/fotos/producto/prod-${n}-2400.webp`;
-  const baseJpg  = `/fotos/producto/prod-${n}.jpg`;
-
+  const gridJpg  = path(`fotos/producto/prod-${n}-1200.jpg`);
+  const gridWebp = path(`fotos/producto/prod-${n}-1200.webp`);
+  const fullJpg  = path(`fotos/producto/prod-${n}-2400.jpg`);
+  const fullWebp = path(`fotos/producto/prod-${n}-2400.webp`);
+  const baseJpg  = path(`fotos/producto/prod-${n}.jpg`);
   return {
     src:      USE_OPT ? gridJpg  : baseJpg,
     srcWebp:  USE_OPT ? gridWebp : null,
@@ -399,17 +397,16 @@ const productoItems = Array.from({ length: PRODUCTO_COUNT }, (_, i) => {
   };
 });
 
-// ---- Autor (N fotos) ----
-const AUTOR_COUNT = 4; // ← cambia a tu cantidad
+// ---- Autor ----
+const AUTOR_COUNT = 4; // ajusta a tu número real
 
 const autorItems = Array.from({ length: AUTOR_COUNT }, (_, i) => {
   const n = String(i + 1).padStart(2, '0');
-  const gridJpg  = `/fotos/autor/aut-${n}-1200.jpg`;
-  const gridWebp = `/fotos/autor/aut-${n}-1200.webp`;
-  const fullJpg  = `/fotos/autor/aut-${n}-2400.jpg`;
-  const fullWebp = `/fotos/autor/aut-${n}-2400.webp`;
-  const baseJpg  = `/fotos/autor/aut-${n}.jpg`;
-
+  const gridJpg  = path(`fotos/autor/aut-${n}-1200.jpg`);
+  const gridWebp = path(`fotos/autor/aut-${n}-1200.webp`);
+  const fullJpg  = path(`fotos/autor/aut-${n}-2400.jpg`);
+  const fullWebp = path(`fotos/autor/aut-${n}-2400.webp`);
+  const baseJpg  = path(`fotos/autor/aut-${n}.jpg`);
   return {
     src:      USE_OPT ? gridJpg  : baseJpg,
     srcWebp:  USE_OPT ? gridWebp : null,
@@ -421,14 +418,15 @@ const autorItems = Array.from({ length: AUTOR_COUNT }, (_, i) => {
 });
 
 // ---- Diseño: Social Media ----
-const SOCIAL_COUNT = 7; // cámbialo
+const SOCIAL_COUNT = 7; // ajusta
+
 const socialItems = Array.from({ length: SOCIAL_COUNT }, (_, i) => {
   const n = String(i + 1).padStart(2, '0');
-  const gridJpg  = `/diseno/social/social-${n}-1200.jpg`;
-  const gridWebp = `/diseno/social/social-${n}-1200.webp`;
-  const fullJpg  = `/diseno/social/social-${n}-2400.jpg`;
-  const fullWebp = `/diseno/social/social-${n}-2400.webp`;
-  const baseJpg  = `/diseno/social/social-${n}.jpg`;
+  const gridJpg  = path(`diseno/social/social-${n}-1200.jpg`);
+  const gridWebp = path(`diseno/social/social-${n}-1200.webp`);
+  const fullJpg  = path(`diseno/social/social-${n}-2400.jpg`);
+  const fullWebp = path(`diseno/social/social-${n}-2400.webp`);
+  const baseJpg  = path(`diseno/social/social-${n}.jpg`);
   return {
     src:      USE_OPT ? gridJpg  : baseJpg,
     srcWebp:  USE_OPT ? gridWebp : null,
@@ -441,14 +439,15 @@ const socialItems = Array.from({ length: SOCIAL_COUNT }, (_, i) => {
 });
 
 // ---- Diseño: Impresos ----
-const IMPRESOS_COUNT = 5; // cámbialo
+const IMPRESOS_COUNT = 5; // ajusta
+
 const impresosItems = Array.from({ length: IMPRESOS_COUNT }, (_, i) => {
   const n = String(i + 1).padStart(2, '0');
-  const gridJpg  = `/diseno/impresos/imp-${n}-1200.jpg`;
-  const gridWebp = `/diseno/impresos/imp-${n}-1200.webp`;
-  const fullJpg  = `/diseno/impresos/imp-${n}-2400.jpg`;
-  const fullWebp = `/diseno/impresos/imp-${n}-2400.webp`;
-  const baseJpg  = `/diseno/impresos/imp-${n}.jpg`;
+  const gridJpg  = path(`diseno/impresos/imp-${n}-1200.jpg`);
+  const gridWebp = path(`diseno/impresos/imp-${n}-1200.webp`);
+  const fullJpg  = path(`diseno/impresos/imp-${n}-2400.jpg`);
+  const fullWebp = path(`diseno/impresos/imp-${n}-2400.webp`);
+  const baseJpg  = path(`diseno/impresos/imp-${n}.jpg`);
   return {
     src:      USE_OPT ? gridJpg  : baseJpg,
     srcWebp:  USE_OPT ? gridWebp : null,
