@@ -106,7 +106,7 @@ document.querySelector('#app').innerHTML = `
         </div>
       </div>
       <div>
-        <img src="${path('hero.jpg')}" ... class="w-full rounded-2xl shadow-sm" />
+        <img src="${path('hero.jpg')}" class="w-full rounded-2xl shadow-sm" />
       </div>
     </section>
 
@@ -506,13 +506,13 @@ function card(img) {
            class="h-full w-full object-cover transition group-hover:scale-105" />
     `;
 
-  // usa JPG (siempre existe); el lightbox no necesita WebP aquí
-const dataFull = img.full;
+  // usa JPG (siempre existe) para el lightbox
+  const dataFull = img.full;
 
   return `
     <button
-  class="group relative aspect-[4/3] overflow-hidden rounded-xl shadow-sm hover:shadow-md transition"
-  data-full="...">
+      class="group relative aspect-[4/3] overflow-hidden rounded-xl shadow-sm hover:shadow-md transition"
+      data-full="${dataFull}" aria-label="ver ${img.alt}">
       ${picture}
       <span class="pointer-events-none absolute inset-0 ring-0 ring-inset group-hover:ring-2 group-hover:ring-black/10 rounded-xl"></span>
     </button>
