@@ -551,8 +551,13 @@ function renderPage(reset = false) {
     const lbImg = document.getElementById('lbImg');
     const overlay = document.getElementById('lightbox');
     if (lbImg && overlay) {
-      lbImg.src = src;
-      overlay.classList.remove('hidden');
+      // Ajusta la ruta del lightbox con el prefijo BASE_URL si es relativo
+let resolvedSrc = src;
+if (!/^https?:\/\//.test(src) && !src.startsWith(BASE)) {
+  resolvedSrc = path(src);
+}
+lbImg.src = resolvedSrc;
+overlay.classList.remove('hidden');
     }
   });
 }
