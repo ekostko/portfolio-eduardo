@@ -506,8 +506,8 @@ function card(img) {
            class="h-full w-full object-cover transition group-hover:scale-105" />
     `;
 
-  // pequeña clave para evitar que el navegador reutilice el último bitmap renderizado
-  const dataFull = (img.fullWebp || img.full) + `#k=${Date.now()}`;
+  // usa JPG (siempre existe); el lightbox no necesita WebP aquí
+const dataFull = img.full;
 
   return `
     <button
@@ -553,10 +553,13 @@ function renderPage(reset = false) {
     if (lbImg && overlay) {
       // Ajusta la ruta del lightbox con el prefijo BASE_URL si es relativo
 let resolvedSrc = src;
+// si no es http/https y no empieza con la BASE, la anteponemos
 if (!/^https?:\/\//.test(src) && !src.startsWith(BASE)) {
   resolvedSrc = path(src);
 }
-lbImg.src = resolvedSrc;
+lbImg.srcset = '';
+lbImg.sizes  = '';
+lbImg.src    = resolvedSrc;
 overlay.classList.remove('hidden');
     }
   });
@@ -575,7 +578,11 @@ function closeLightbox() {
   const overlay = document.getElementById('lightbox');
   const lbImg = document.getElementById('lbImg');
   overlay?.classList.add('hidden');
-  if (lbImg) lbImg.src = '';
+  if (lbImg) {
+    lbImg.src = '';
+    lbImg.srcset = '';
+    lbImg.sizes  = '';
+  }
 }
 
 // Estado visual del botón activo
@@ -736,12 +743,17 @@ overlay.addEventListener('click', (e) => {
   if (e.target.id === 'lightbox' || e.target.id === 'lbClose') {
     overlay.classList.add('hidden');
     lbImg.src = '';
+    lbImg.srcset = '';   // 👈
+    lbImg.sizes  = '';   // 👈
   }
 });
+
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     overlay.classList.add('hidden');
     lbImg.src = '';
+    lbImg.srcset = '';   // 👈
+    lbImg.sizes  = '';   // 👈
   }
 });
 
